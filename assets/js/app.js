@@ -692,16 +692,30 @@ function fillBookModal(book) {
   `;
 }
 
+function toggleProfileForm() {
+  const form = qs('#profileForm');
+  if (!form) return;
+
+  form.classList.toggle('hidden');
+}
+
 function fillProfileForm(profile) {
   const nameInput = qs('#profileName');
   const emailInput = qs('#profileEmail');
   const cityInput = qs('#profileCity');
+  const currentPasswordInput = qs('#profileCurrentPassword');
+  const newPasswordInput = qs('#profileNewPassword');
+  const confirmPasswordInput = qs('#profileConfirmPassword');
 
   if (!nameInput || !emailInput || !cityInput || !profile) return;
 
   nameInput.value = profile.fullName || profile.name || '';
   emailInput.value = profile.email || '';
   cityInput.value = profile.city || '';
+
+  if (currentPasswordInput) currentPasswordInput.value = '';
+  if (newPasswordInput) newPasswordInput.value = '';
+  if (confirmPasswordInput) confirmPasswordInput.value = '';
 }
 
 async function submitAuthForm(event, mode) {
@@ -789,10 +803,45 @@ async function handleProfileSubmit(event) {
   const email = qs('#profileEmail')?.value.trim();
   const city = qs('#profileCity')?.value.trim();
 
+  const currentPassword = qs('#profileCurrentPassword')?.value.trim();
+  const newPassword = qs('#profileNewPassword')?.value.trim();
+  const confirmPassword = qs('#profileConfirmPassword')?.value.trim();
+
+  if (newPassword || confirmPassword || currentPassword) {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      if (errorBox) {
+        errorBox.textContent =
+          'Для зміни пароля потрібно заповнити поточний пароль, новий пароль і повторення нового пароля.';
+      }
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      if (errorBox) {
+        errorBox.textContent = 'Новий пароль має бути мінімум 6 символів.';
+      }
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      if (errorBox) {
+        errorBox.textContent =
+          'Новий пароль і повторення пароля не збігаються.';
+      }
+      return;
+    }
+  }
+
   try {
     const data = await apiFetch(`/api/users/${state.currentUser.id}`, {
       method: 'PUT',
-      body: JSON.stringify({ name, email, city }),
+      body: JSON.stringify({
+        name,
+        email,
+        city,
+        currentPassword,
+        newPassword,
+      }),
     });
 
     state.currentUser = {
@@ -807,6 +856,10 @@ async function handleProfileSubmit(event) {
     setCurrentUser(state.currentUser);
     renderAuthControls();
     renderProfile(state.currentUser);
+
+    const form = qs('#profileForm');
+    if (form) form.classList.add('hidden');
+
     messageBox('Профіль оновлено');
   } catch (error) {
     if (errorBox) {
@@ -829,6 +882,7 @@ function bindAuthForms() {
 
 function bindProfileForm() {
   qs('#profileForm')?.addEventListener('submit', handleProfileSubmit);
+  qs('#editProfileBtn')?.addEventListener('click', toggleProfileForm);
 }
 
 async function logoutUser() {

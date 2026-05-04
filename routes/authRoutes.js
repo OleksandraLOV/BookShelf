@@ -118,7 +118,7 @@ router.post('/login', (req, res) => {
 
 router.put('/users/:id', (req, res) => {
   const { id } = req.params;
-  const { name, email, city } = req.body;
+  const { name, email, city, currentPassword, newPassword } = req.body;
 
   if (!name || !email || !city) {
     return res.status(400).json({
@@ -126,11 +126,18 @@ router.put('/users/:id', (req, res) => {
     });
   }
 
-  const checkUserQuery = 'SELECT id FROM users WHERE id = ?';
+  if (newPassword && newPassword.length < 6) {
+    return res.status(400).json({
+      message: 'Новий пароль має бути мінімум 6 символів',
+    });
+  }
 
-  db.query(checkUserQuery, [id], (checkErr, checkResult) => {
+  const checkUserQuery = 'SELECT * FROM users WHERE id = ?';
+
+  db.query(checkUserQuery, [id], async (checkErr, checkResult) => {
     if (checkErr) {
       console.error('❌ Помилка перевірки користувача:', checkErr);
+
       return res.status(500).json({
         message: 'Помилка сервера',
       });
@@ -140,6 +147,67 @@ router.put('/users/:id', (req, res) => {
       return res.status(404).json({
         message: 'Користувача не знайдено',
       });
+    }
+
+    const user = checkResult[0];
+
+    if (newPassword) {
+      if (!currentPassword) {
+        return res.status(400).json({
+          message: 'Поточний пароль обов’язковий для зміни пароля',
+        });
+      }
+
+      const isPasswordCorrect = await bcrypt.compare(
+        currentPassword,
+        user.password,
+      );
+
+      if (!isPasswordCorrect) {
+        return res.status(401).json({
+          message: 'Поточний пароль введено неправильно',
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      const updateWithPasswordQuery = `
+        UPDATE users
+        SET name = ?, email = ?, city = ?, password = ?
+        WHERE id = ?
+      `;
+
+      db.query(
+        updateWithPasswordQuery,
+        [name, email, city, hashedPassword, id],
+        (updateErr) => {
+          if (updateErr) {
+            console.error('❌ Помилка оновлення профілю:', updateErr);
+
+            if (updateErr.code === 'ER_DUP_ENTRY') {
+              return res.status(409).json({
+                message: 'Користувач з таким email вже існує',
+              });
+            }
+
+            return res.status(500).json({
+              message: 'Помилка сервера при оновленні профілю',
+            });
+          }
+
+          return res.json({
+            message: 'Профіль оновлено успішно',
+            user: {
+              id: Number(id),
+              name,
+              email,
+              city,
+            },
+          });
+        },
+      );
+
+      return;
     }
 
     const updateQuery = `

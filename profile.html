@@ -108,13 +108,17 @@
                   <div class="fw-bold mb-1">Місто</div>
                   <div class="muted" data-profile-city>Київ</div>
                 </div>
-                <div class="mini-card mb-3">
-                  <div class="fw-bold mb-2">Що вже є</div>
-                  <ul class="info-list">
-                    <li>авторизація</li>
-                    <li>власні оголошення</li>
-                    <li>CRUD тільки для автора</li>
-                  </ul>
+                <div class="d-grid gap-2">
+                  <button
+                    type="button"
+                    class="btn btn-accent"
+                    id="editProfileBtn">
+                    Редагувати профіль
+                  </button>
+
+                  <a href="catalog.html" class="btn btn-soft"
+                    >Перейти в каталог</a
+                  >
                 </div>
                 <div class="d-grid gap-2">
                   <a href="catalog.html" class="btn btn-soft"
@@ -124,7 +128,7 @@
               </div>
             </div>
 
-            <form id="profileForm" class="row g-3 mt-4">
+            <form id="profileForm" class="row g-3 mt-4 hidden">
               <div class="col-md-4">
                 <label class="form-label">Ім’я</label>
                 <input
@@ -150,6 +154,40 @@
                   id="profileCity"
                   class="form-control"
                   required />
+              </div>
+              <div class="col-12">
+                <hr />
+                <h3 class="h5 mb-1">Зміна пароля</h3>
+                <p class="muted mb-0">
+                  Якщо не хочете змінювати пароль, залиште ці поля порожніми.
+                </p>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Поточний пароль</label>
+                <input
+                  type="password"
+                  id="profileCurrentPassword"
+                  class="form-control"
+                  autocomplete="current-password" />
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Новий пароль</label>
+                <input
+                  type="password"
+                  id="profileNewPassword"
+                  class="form-control"
+                  autocomplete="new-password" />
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Повторіть новий пароль</label>
+                <input
+                  type="password"
+                  id="profileConfirmPassword"
+                  class="form-control"
+                  autocomplete="new-password" />
               </div>
 
               <div class="col-12">
