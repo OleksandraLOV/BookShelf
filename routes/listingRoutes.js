@@ -3,8 +3,31 @@ const db = require('../config/db');
 
 const router = express.Router();
 
+function normalizePrice(type, price) {
+  if (type !== 'sell') return null;
+  if (price === undefined || price === null || price === '') return null;
+
+  const numericPrice = Number(price);
+
+  if (Number.isNaN(numericPrice) || numericPrice < 0) {
+    return null;
+  }
+
+  return numericPrice;
+}
+
 router.post('/listings', (req, res) => {
-  const { title, description, condition_book, type, city, user_id } = req.body;
+  const {
+    title,
+    description,
+    condition_book,
+    type,
+    city,
+    user_id,
+    image_url,
+    price,
+    seller_note,
+  } = req.body;
 
   if (!title || !type || !city || !user_id) {
     return res.status(400).json({
@@ -23,6 +46,7 @@ router.post('/listings', (req, res) => {
   db.query(checkUserQuery, [user_id], (checkErr, checkResult) => {
     if (checkErr) {
       console.error('❌ Помилка перевірки користувача:', checkErr);
+
       return res.status(500).json({
         message: 'Помилка сервера при перевірці користувача',
       });
@@ -35,16 +59,37 @@ router.post('/listings', (req, res) => {
     }
 
     const insertListingQuery = `
-      INSERT INTO listings (title, description, condition_book, type, city, user_id)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO listings (
+        title,
+        description,
+        condition_book,
+        type,
+        city,
+        user_id,
+        image_url,
+        price,
+        seller_note
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
       insertListingQuery,
-      [title, description, condition_book, type, city, user_id],
+      [
+        title,
+        description || '',
+        condition_book || 'good',
+        type,
+        city,
+        user_id,
+        image_url || null,
+        normalizePrice(type, price),
+        seller_note || null,
+      ],
       (insertErr, insertResult) => {
         if (insertErr) {
           console.error('❌ Помилка створення оголошення:', insertErr);
+
           return res.status(500).json({
             message: 'Помилка сервера при створенні оголошення',
           });
@@ -63,7 +108,9 @@ router.get('/listings', (req, res) => {
   const { title, city, type } = req.query;
 
   let query = `
-    SELECT listings.*, users.name AS user_name
+    SELECT 
+      listings.*,
+      users.name AS user_name
     FROM listings
     JOIN users ON listings.user_id = users.id
     WHERE 1=1
@@ -91,6 +138,7 @@ router.get('/listings', (req, res) => {
   db.query(query, values, (err, results) => {
     if (err) {
       console.error('❌ Помилка отримання оголошень:', err);
+
       return res.status(500).json({
         message: 'Помилка сервера',
       });
@@ -104,7 +152,10 @@ router.get('/listings/:id', (req, res) => {
   const { id } = req.params;
 
   const query = `
-    SELECT listings.*, users.name AS user_name
+    SELECT 
+      listings.*,
+      users.name AS user_name,
+      users.email AS seller_email
     FROM listings
     JOIN users ON listings.user_id = users.id
     WHERE listings.id = ?
@@ -113,6 +164,7 @@ router.get('/listings/:id', (req, res) => {
   db.query(query, [id], (err, results) => {
     if (err) {
       console.error('❌ Помилка отримання оголошення:', err);
+
       return res.status(500).json({
         message: 'Помилка сервера',
       });
@@ -132,7 +184,9 @@ router.get('/my-listings/:userId', (req, res) => {
   const { userId } = req.params;
 
   const query = `
-    SELECT listings.*, users.name AS user_name
+    SELECT 
+      listings.*,
+      users.name AS user_name
     FROM listings
     JOIN users ON listings.user_id = users.id
     WHERE listings.user_id = ?
@@ -142,6 +196,7 @@ router.get('/my-listings/:userId', (req, res) => {
   db.query(query, [userId], (err, results) => {
     if (err) {
       console.error('❌ Помилка отримання моїх оголошень:', err);
+
       return res.status(500).json({
         message: 'Помилка сервера',
       });
@@ -153,11 +208,28 @@ router.get('/my-listings/:userId', (req, res) => {
 
 router.put('/listings/:id', (req, res) => {
   const listingId = req.params.id;
-  const { title, description, condition_book, type, city, user_id } = req.body;
+
+  const {
+    title,
+    description,
+    condition_book,
+    type,
+    city,
+    user_id,
+    image_url,
+    price,
+    seller_note,
+  } = req.body;
 
   if (!user_id) {
     return res.status(400).json({
       message: 'Потрібен user_id',
+    });
+  }
+
+  if (type !== 'sell' && type !== 'exchange') {
+    return res.status(400).json({
+      message: 'Тип оголошення має бути sell або exchange',
     });
   }
 
@@ -176,7 +248,7 @@ router.put('/listings/:id', (req, res) => {
       });
     }
 
-    if (result[0].user_id !== user_id) {
+    if (Number(result[0].user_id) !== Number(user_id)) {
       return res.status(403).json({
         message: 'Немає доступу',
       });
@@ -184,15 +256,35 @@ router.put('/listings/:id', (req, res) => {
 
     const updateQuery = `
       UPDATE listings
-      SET title=?, description=?, condition_book=?, type=?, city=?
-      WHERE id=?
+      SET 
+        title = ?,
+        description = ?,
+        condition_book = ?,
+        type = ?,
+        city = ?,
+        image_url = ?,
+        price = ?,
+        seller_note = ?
+      WHERE id = ?
     `;
 
     db.query(
       updateQuery,
-      [title, description, condition_book, type, city, listingId],
+      [
+        title,
+        description || '',
+        condition_book || 'good',
+        type,
+        city,
+        image_url || null,
+        normalizePrice(type, price),
+        seller_note || null,
+        listingId,
+      ],
       (updateErr) => {
         if (updateErr) {
+          console.error('❌ Помилка оновлення оголошення:', updateErr);
+
           return res.status(500).json({
             message: 'Помилка оновлення',
           });
@@ -216,7 +308,6 @@ router.delete('/listings/:id', (req, res) => {
     });
   }
 
-  // Перевіряємо власника
   const checkQuery = 'SELECT user_id FROM listings WHERE id = ?';
 
   db.query(checkQuery, [listingId], (err, result) => {
@@ -232,13 +323,12 @@ router.delete('/listings/:id', (req, res) => {
       });
     }
 
-    if (result[0].user_id !== userId) {
+    if (Number(result[0].user_id) !== Number(userId)) {
       return res.status(403).json({
         message: 'Немає доступу',
       });
     }
 
-    // Видаляємо
     const deleteQuery = 'DELETE FROM listings WHERE id = ?';
 
     db.query(deleteQuery, [listingId], (deleteErr) => {

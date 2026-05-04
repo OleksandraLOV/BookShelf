@@ -124,15 +124,28 @@ function normalizeBook(book) {
     userId: book.user_id,
     createdAt: book.created_at,
     seller: book.user_name || 'Користувач',
-    image: fallbackImage,
-    price: 0,
-    sellerNote: '',
-    sellerEmail: '',
+    image: book.image_url || fallbackImage,
+    price: book.price,
+    sellerNote: book.seller_note || '',
+    sellerEmail: book.seller_email || '',
   };
 }
 
 function priceLabel(book) {
-  return book.type === 'Продаж' ? 'Продаж' : 'Обмін';
+  if (book.type_raw === 'sell') {
+    return book.price ? `${Number(book.price)} ₴` : 'Продаж';
+  }
+
+  return 'Обмін';
+}
+
+function buildSellerMailto(book) {
+  const subject = encodeURIComponent(`Питання щодо книги "${book.title}"`);
+  const body = encodeURIComponent(
+    `Добрий день! Мене зацікавило ваше оголошення "${book.title}" на BookShelf.`,
+  );
+
+  return `mailto:${book.sellerEmail}?subject=${subject}&body=${body}`;
 }
 
 function getInitials(name = 'BS') {
@@ -299,6 +312,15 @@ function fillBookModal(book) {
     `
     : '';
 
+  const contactButton =
+    book.sellerEmail && !isOwner(book)
+      ? `
+      <a class="btn btn-accent" href="${escapeHtml(buildSellerMailto(book))}">
+        Написати продавцю
+      </a>
+    `
+      : '';
+
   body.innerHTML = `
     <div class="row g-0">
       <div class="col-lg-5">
@@ -313,11 +335,22 @@ function fillBookModal(book) {
         <h3 class="mb-3">${escapeHtml(book.title)}</h3>
         <div class="price mb-3">${priceLabel(book)}</div>
         <p class="muted mb-3">${escapeHtml(book.description)}</p>
+        ${
+          book.sellerNote
+            ? `
+      <div class="mini-card mb-4">
+        <div class="fw-bold mb-1">Нотатка продавця</div>
+        <div class="muted">${escapeHtml(book.sellerNote)}</div>
+      </div>
+    `
+            : ''
+        }
         <div class="mini-card mb-4">
           <div class="fw-bold mb-1">Продавець</div>
           <div class="muted">${escapeHtml(book.seller)}</div>
         </div>
         <div class="d-grid gap-2 d-md-flex">
+           ${contactButton}
           <button class="btn btn-soft" data-bs-dismiss="modal">Закрити</button>
         </div>
         ${ownerActions}
@@ -383,12 +416,18 @@ function syncPriceField(form) {
 }
 
 function collectFormData(form) {
+  const type = uiTypeToApi(qs('.type-field', form).value);
+  const priceField = qs('.price-field', form);
+
   return {
     title: qs('.title-field', form).value.trim(),
     city: qs('.city-field', form).value,
-    type: uiTypeToApi(qs('.type-field', form).value),
+    type,
     condition_book: uiConditionToApi(qs('.condition-field', form).value),
     description: qs('.description-field', form).value.trim(),
+    image_url: qs('.image-field', form)?.value.trim() || '',
+    price: type === 'sell' ? priceField?.value || null : null,
+    seller_note: qs('.note-field', form)?.value.trim() || '',
   };
 }
 
@@ -517,9 +556,11 @@ async function prepareEdit(id) {
     const priceField = qs('.price-field', form);
     const noteField = qs('.note-field', form);
 
-    if (imageField) imageField.value = '';
-    if (priceField) priceField.value = 0;
-    if (noteField) noteField.value = '';
+    if (imageField)
+      imageField.value =
+        book.image && book.image !== fallbackImage ? book.image : '';
+    if (priceField) priceField.value = book.price || '';
+    if (noteField) noteField.value = book.sellerNote || '';
 
     syncPriceField(form);
     new bootstrap.Modal(qs('#addBookModal')).show();
