@@ -199,7 +199,9 @@ function bookCardTemplate(book) {
         <div class="pt-3 px-1">
           <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
             <h3 class="h5 mb-0">${escapeHtml(book.title)}</h3>
-            <span class="book-badge">${escapeHtml(book.type)}</span>
+            <span class="book-badge book-badge-${book.type_raw}">
+  ${escapeHtml(book.type)}
+</span>
           </div>
           <div class="d-flex justify-content-between align-items-center mb-2">
             <div class="muted">${escapeHtml(book.city)}</div>
@@ -679,7 +681,9 @@ function fillBookModal(book) {
 
       <div class="col-lg-7 p-4 p-md-5">
         <div class="d-flex flex-wrap gap-2 mb-3">
-          <span class="book-badge">${escapeHtml(book.type)}</span>
+          <span class="book-badge book-badge-${book.type_raw}">
+  ${escapeHtml(book.type)}
+</span>
           <span class="book-badge">${escapeHtml(book.city)}</span>
           <span class="book-badge">${escapeHtml(book.condition)}</span>
         </div>
