@@ -367,3 +367,11 @@ body {
   padding: 110px;
   background: #efe4d4;
 }
+.listing-form-error {
+  border: 1px solid rgba(130, 58, 58, 0.25);
+  background: #f4dede;
+  color: #6f2f2f;
+  font-weight: 600;
+  border-radius: 22px;
+  padding: 14px 18px;
+}

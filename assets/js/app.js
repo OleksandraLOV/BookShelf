@@ -67,6 +67,26 @@ function messageBox(message, type = 'success') {
     box.classList.add('hidden');
   }, 3200);
 }
+function showListingFormError(form, message) {
+  const errorBox = qs('.listing-form-error', form);
+
+  if (!errorBox) {
+    messageBox(message, 'error');
+    return;
+  }
+
+  errorBox.textContent = message;
+  errorBox.classList.remove('hidden');
+}
+
+function clearListingFormError(form) {
+  const errorBox = qs('.listing-form-error', form);
+
+  if (!errorBox) return;
+
+  errorBox.textContent = '';
+  errorBox.classList.add('hidden');
+}
 
 function escapeHtml(value = '') {
   return String(value)
@@ -411,9 +431,12 @@ function requireAuth(message = 'Спочатку увійдіть у свій а
 
 async function handleListingSubmit(event) {
   event.preventDefault();
-  if (!requireAuth()) return;
 
   const form = event.currentTarget;
+  clearListingFormError(form);
+
+  if (!requireAuth()) return;
+
   const editId = form.dataset.editId;
   const payload = collectFormData(form);
 
@@ -426,6 +449,7 @@ async function handleListingSubmit(event) {
           user_id: state.currentUser.id,
         }),
       });
+
       messageBox('Оголошення оновлено');
     } else {
       await apiFetch('/api/listings', {
@@ -435,11 +459,13 @@ async function handleListingSubmit(event) {
           user_id: state.currentUser.id,
         }),
       });
+
       messageBox('Оголошення створено');
     }
 
     form.reset();
     delete form.dataset.editId;
+    clearListingFormError(form);
     syncPriceField(form);
 
     const modal = bootstrap.Modal.getInstance(qs('#addBookModal'));
@@ -447,7 +473,7 @@ async function handleListingSubmit(event) {
 
     await refreshPageData();
   } catch (error) {
-    messageBox(error.message, 'error');
+    showListingFormError(form, error.message);
   }
 }
 
@@ -527,6 +553,7 @@ async function handleCatalogFilters() {
 function initForms() {
   qsa('.listing-form').forEach((form) => {
     form.addEventListener('submit', handleListingSubmit);
+    form.addEventListener('input', () => clearListingFormError(form));
 
     const typeField = qs('.type-field', form);
     if (typeField) {
