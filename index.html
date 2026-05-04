@@ -37,9 +37,6 @@
             <li class="nav-item">
               <a class="nav-link" href="catalog.html">Каталог</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="profile.html">Профіль</a>
-            </li>
             <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
               <button
                 class="btn btn-accent js-add-book"
@@ -61,11 +58,9 @@
           <div class="hero-card">
             <div class="row g-4 align-items-center">
               <div class="col-lg-7">
-                <span class="chip"
-                  >Продаж · Обмін · Авторизація · API + MySQL</span
-                >
+                <span class="chip">Продаж · Обмін · Книги у твоєму місті</span>
                 <h1 class="display-title mt-3">
-                  Головна сторінка сайту для обміну книгами.
+                  Знайдіть нову книгу або передайте свою далі.
                 </h1>
                 <p class="hero-text">
                   Створюйте оголошення про продаж або обмін книг, переглядайте
@@ -82,24 +77,49 @@
               <div class="col-lg-5">
                 <div class="hero-visual">
                   <div class="cover-card cover-1">
-                    <div class="small fw-semibold opacity-75">Backend</div>
+                    <div class="small fw-semibold opacity-75">
+                      <span>Крок 1</span>
+                    </div>
                     <div>
-                      <div class="fs-4 fw-bold">Express API</div>
-                      <div class="opacity-75">REST маршрути</div>
+                      <div class="fs-4 fw-bold"><h3>Знайдіть книгу</h3></div>
+                      <div class="opacity-75">
+                        <p>
+                          Переглядайте оголошення та фільтруйте їх за містом,
+                          типом і назвою.
+                        </p>
+                      </div>
                     </div>
                   </div>
                   <div class="cover-card cover-2">
-                    <div class="small fw-semibold opacity-75">Database</div>
+                    <div class="small fw-semibold opacity-75">
+                      <span>Крок 2</span>
+                    </div>
                     <div>
-                      <div class="fs-5 fw-bold">MySQL</div>
-                      <div class="opacity-75">Книги · Користувачі · Сесії</div>
+                      <div class="fs-5 fw-bold">
+                        <h3>Домовтесь із власником</h3>
+                      </div>
+                      <div class="opacity-75">
+                        <p>
+                          Відкрийте оголошення та зв’яжіться з продавцем через
+                          email.
+                        </p>
+                      </div>
                     </div>
                   </div>
                   <div class="cover-card cover-3">
-                    <div class="small fw-semibold opacity-75">Frontend</div>
+                    <div class="small fw-semibold opacity-75">
+                      <span>Крок 3</span>
+                    </div>
                     <div>
-                      <div class="fs-5 fw-bold">Bootstrap UI</div>
-                      <div class="opacity-75">Окремі сторінки + auth modal</div>
+                      <div class="fs-5 fw-bold">
+                        <h3>Додайте свою книгу</h3>
+                      </div>
+                      <div class="opacity-75">
+                        <p>
+                          Опублікуйте оголошення про продаж або обмін книги за
+                          кілька хвилин.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -147,28 +167,37 @@
           <div class="row g-3">
             <div class="col-md-4">
               <div class="stat-card h-100">
-                <div class="muted mb-2">Модуль 1</div>
-                <div class="stat-number">Auth</div>
+                <div class="muted mb-2"><span>01</span></div>
+                <div class="stat-number"><h3>Особистий акаунт</h3></div>
                 <div class="muted">
-                  Реєстрація, вхід і вихід без жорсткого userId.
+                  <p>
+                    Користувач може зареєструватися, увійти в систему та
+                    керувати своїм профілем.
+                  </p>
                 </div>
               </div>
             </div>
             <div class="col-md-4">
               <div class="stat-card h-100">
-                <div class="muted mb-2">Модуль 2</div>
-                <div class="stat-number">Каталог</div>
+                <div class="muted mb-2"><span>02</span></div>
+                <div class="stat-number"><h3>Каталог оголошень</h3></div>
                 <div class="muted">
-                  Окрема сторінка з пошуком і API-фільтрами.
+                  <p>
+                    Книги можна переглядати, шукати за назвою та фільтрувати за
+                    містом або типом оголошення.
+                  </p>
                 </div>
               </div>
             </div>
             <div class="col-md-4">
               <div class="stat-card h-100">
-                <div class="muted mb-2">Модуль 3</div>
-                <div class="stat-number">CRUD</div>
+                <div class="muted mb-2"><span>03</span></div>
+                <div class="stat-number"><h3>Власні оголошення</h3></div>
                 <div class="muted">
-                  Створення, редагування і видалення власних книг.
+                  <p>
+                    Користувач може створювати, редагувати та видаляти тільки
+                    свої оголошення.
+                  </p>
                 </div>
               </div>
             </div>

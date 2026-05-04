@@ -1,6 +1,4 @@
-const fallbackImage =
-  'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=900&q=80';
-
+const fallbackImage = 'assets/img/open-book.png';
 const API_BASE = 'http://localhost:3000';
 const CURRENT_USER_KEY = 'bookshelf_current_user';
 
@@ -277,23 +275,23 @@ function renderMyListings(books) {
 function renderAuthControls() {
   qsa('[data-auth-nav]').forEach((wrap) => {
     if (state.currentUser) {
+      const userName = escapeHtml(
+        state.currentUser.fullName ||
+          state.currentUser.name ||
+          state.currentUser.email ||
+          'Користувач',
+      );
+
       wrap.innerHTML = `
-        <div class="auth-pill">
-          <span class="auth-pill__name">${escapeHtml(
-            state.currentUser.fullName ||
-              state.currentUser.name ||
-              state.currentUser.email ||
-              'Користувач',
-          )}</span>
-          <button class="btn btn-soft btn-sm" type="button" onclick="logoutUser()">Вийти</button>
-        </div>
+        <a href="profile.html" class="user-pill user-link">
+          ${userName}
+        </a>
+        <button class="btn btn-soft" onclick="logoutUser()">Вийти</button>
       `;
     } else {
       wrap.innerHTML = `
-        <div class="d-flex gap-2 flex-wrap justify-content-end">
-          <button class="btn btn-soft btn-sm" type="button" onclick="openAuthModal('login')">Увійти</button>
-          <button class="btn btn-accent btn-sm" type="button" onclick="openAuthModal('register')">Реєстрація</button>
-        </div>
+        <button class="btn btn-soft" onclick="openAuthModal('login')">Увійти</button>
+        <button class="btn btn-accent" onclick="openAuthModal('register')">Реєстрація</button>
       `;
     }
   });
