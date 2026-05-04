@@ -116,4 +116,64 @@ router.post('/login', (req, res) => {
   });
 });
 
+router.put('/users/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, email, city } = req.body;
+
+  if (!name || !email || !city) {
+    return res.status(400).json({
+      message: 'Ім’я, email і місто обов’язкові',
+    });
+  }
+
+  const checkUserQuery = 'SELECT id FROM users WHERE id = ?';
+
+  db.query(checkUserQuery, [id], (checkErr, checkResult) => {
+    if (checkErr) {
+      console.error('❌ Помилка перевірки користувача:', checkErr);
+      return res.status(500).json({
+        message: 'Помилка сервера',
+      });
+    }
+
+    if (checkResult.length === 0) {
+      return res.status(404).json({
+        message: 'Користувача не знайдено',
+      });
+    }
+
+    const updateQuery = `
+      UPDATE users
+      SET name = ?, email = ?, city = ?
+      WHERE id = ?
+    `;
+
+    db.query(updateQuery, [name, email, city, id], (updateErr) => {
+      if (updateErr) {
+        console.error('❌ Помилка оновлення профілю:', updateErr);
+
+        if (updateErr.code === 'ER_DUP_ENTRY') {
+          return res.status(409).json({
+            message: 'Користувач з таким email вже існує',
+          });
+        }
+
+        return res.status(500).json({
+          message: 'Помилка сервера при оновленні профілю',
+        });
+      }
+
+      return res.json({
+        message: 'Профіль оновлено успішно',
+        user: {
+          id: Number(id),
+          name,
+          email,
+          city,
+        },
+      });
+    });
+  });
+});
+
 module.exports = router;

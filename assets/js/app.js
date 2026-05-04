@@ -227,6 +227,8 @@ function renderProfile(profile) {
 
   const avatarEl = qs('[data-profile-avatar]');
   if (avatarEl) avatarEl.textContent = getInitials(name);
+
+  fillProfileForm(profile);
 }
 
 function renderMyListings(books) {
@@ -628,6 +630,18 @@ function bindAuthTabs() {
   });
 }
 
+function fillProfileForm(profile) {
+  const nameInput = qs('#profileName');
+  const emailInput = qs('#profileEmail');
+  const cityInput = qs('#profileCity');
+
+  if (!nameInput || !emailInput || !cityInput || !profile) return;
+
+  nameInput.value = profile.fullName || profile.name || '';
+  emailInput.value = profile.email || '';
+  cityInput.value = profile.city || '';
+}
+
 async function submitAuthForm(event, mode) {
   event.preventDefault();
 
@@ -701,6 +715,46 @@ async function submitAuthForm(event, mode) {
   }
 }
 
+async function handleProfileSubmit(event) {
+  event.preventDefault();
+
+  if (!requireAuth()) return;
+
+  const errorBox = qs('#profileError');
+  if (errorBox) errorBox.textContent = '';
+
+  const name = qs('#profileName')?.value.trim();
+  const email = qs('#profileEmail')?.value.trim();
+  const city = qs('#profileCity')?.value.trim();
+
+  try {
+    const data = await apiFetch(`/api/users/${state.currentUser.id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ name, email, city }),
+    });
+
+    state.currentUser = {
+      ...state.currentUser,
+      id: data.user.id,
+      name: data.user.name,
+      fullName: data.user.name,
+      email: data.user.email,
+      city: data.user.city,
+    };
+
+    setCurrentUser(state.currentUser);
+    renderAuthControls();
+    renderProfile(state.currentUser);
+    messageBox('Профіль оновлено');
+  } catch (error) {
+    if (errorBox) {
+      errorBox.textContent = error.message;
+    } else {
+      messageBox(error.message, 'error');
+    }
+  }
+}
+
 function bindAuthForms() {
   qs('#loginForm')?.addEventListener('submit', (event) =>
     submitAuthForm(event, 'login'),
@@ -709,6 +763,10 @@ function bindAuthForms() {
   qs('#registerForm')?.addEventListener('submit', (event) =>
     submitAuthForm(event, 'register'),
   );
+}
+
+function bindProfileForm() {
+  qs('#profileForm')?.addEventListener('submit', handleProfileSubmit);
 }
 
 async function logoutUser() {
@@ -725,6 +783,7 @@ async function init() {
   initCatalogFromQuery();
   bindAuthTabs();
   bindAuthForms();
+  bindProfileForm();
 
   try {
     await loadSession();
