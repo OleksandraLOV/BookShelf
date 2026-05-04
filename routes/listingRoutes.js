@@ -227,6 +227,12 @@ router.put('/listings/:id', (req, res) => {
     });
   }
 
+  if (!title || !type || !city) {
+    return res.status(400).json({
+      message: 'Поля title, type, city обов’язкові',
+    });
+  }
+
   if (type !== 'sell' && type !== 'exchange') {
     return res.status(400).json({
       message: 'Тип оголошення має бути sell або exchange',

@@ -299,66 +299,6 @@ function renderAuthControls() {
   });
 }
 
-function fillBookModal(book) {
-  const body = qs('#bookModalBody');
-  if (!body) return;
-
-  const ownerActions = isOwner(book)
-    ? `
-      <div class="d-flex gap-2 flex-wrap mt-2">
-        <button class="btn btn-soft" onclick="prepareEdit(${book.id})">Редагувати</button>
-        <button class="btn btn-soft" onclick="deleteListing(${book.id})">Видалити</button>
-      </div>
-    `
-    : '';
-
-  const contactButton =
-    book.sellerEmail && !isOwner(book)
-      ? `
-      <a class="btn btn-accent" href="${escapeHtml(buildSellerMailto(book))}">
-        Написати продавцю
-      </a>
-    `
-      : '';
-
-  body.innerHTML = `
-    <div class="row g-0">
-      <div class="col-lg-5">
-        <img src="${escapeHtml(book.image || fallbackImage)}" alt="${escapeHtml(book.title)}" class="w-100 h-100" style="object-fit: cover; min-height: 100%;" onerror="this.src='${fallbackImage}'">
-      </div>
-      <div class="col-lg-7 p-4 p-md-5">
-        <div class="d-flex flex-wrap gap-2 mb-3">
-          <span class="book-badge">${escapeHtml(book.type)}</span>
-          <span class="book-badge">${escapeHtml(book.city)}</span>
-          <span class="book-badge">${escapeHtml(book.condition)}</span>
-        </div>
-        <h3 class="mb-3">${escapeHtml(book.title)}</h3>
-        <div class="price mb-3">${priceLabel(book)}</div>
-        <p class="muted mb-3">${escapeHtml(book.description)}</p>
-        ${
-          book.sellerNote
-            ? `
-      <div class="mini-card mb-4">
-        <div class="fw-bold mb-1">Нотатка продавця</div>
-        <div class="muted">${escapeHtml(book.sellerNote)}</div>
-      </div>
-    `
-            : ''
-        }
-        <div class="mini-card mb-4">
-          <div class="fw-bold mb-1">Продавець</div>
-          <div class="muted">${escapeHtml(book.seller)}</div>
-        </div>
-        <div class="d-grid gap-2 d-md-flex">
-           ${contactButton}
-          <button class="btn btn-soft" data-bs-dismiss="modal">Закрити</button>
-        </div>
-        ${ownerActions}
-      </div>
-    </div>
-  `;
-}
-
 async function loadBooks(filters = {}) {
   const params = new URLSearchParams();
 
@@ -556,11 +496,18 @@ async function prepareEdit(id) {
     const priceField = qs('.price-field', form);
     const noteField = qs('.note-field', form);
 
-    if (imageField)
+    if (imageField) {
       imageField.value =
         book.image && book.image !== fallbackImage ? book.image : '';
-    if (priceField) priceField.value = book.price || '';
-    if (noteField) noteField.value = book.sellerNote || '';
+    }
+
+    if (priceField) {
+      priceField.value = book.price || '';
+    }
+
+    if (noteField) {
+      noteField.value = book.sellerNote || '';
+    }
 
     syncPriceField(form);
     new bootstrap.Modal(qs('#addBookModal')).show();
@@ -669,6 +616,80 @@ function bindAuthTabs() {
   qsa('[data-auth-tab]').forEach((tab) => {
     tab.addEventListener('click', () => openAuthModal(tab.dataset.authTab));
   });
+}
+
+function fillBookModal(book) {
+  const body = qs('#bookModalBody');
+  if (!body) return;
+
+  const ownerActions = isOwner(book)
+    ? `
+      <div class="d-flex gap-2 flex-wrap mt-2">
+        <button class="btn btn-soft" onclick="prepareEdit(${book.id})">Редагувати</button>
+        <button class="btn btn-soft" onclick="deleteListing(${book.id})">Видалити</button>
+      </div>
+    `
+    : '';
+
+  const contactButton =
+    book.sellerEmail && !isOwner(book)
+      ? `
+        <a class="btn btn-accent" href="${escapeHtml(buildSellerMailto(book))}">
+          Написати продавцю
+        </a>
+      `
+      : '';
+
+  body.innerHTML = `
+    <div class="row g-0">
+      <div class="col-lg-5">
+        <img 
+          src="${escapeHtml(book.image || fallbackImage)}" 
+          alt="${escapeHtml(book.title)}" 
+          class="w-100 h-100" 
+          style="object-fit: cover; min-height: 100%;" 
+          onerror="this.src='${fallbackImage}'"
+        >
+      </div>
+
+      <div class="col-lg-7 p-4 p-md-5">
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <span class="book-badge">${escapeHtml(book.type)}</span>
+          <span class="book-badge">${escapeHtml(book.city)}</span>
+          <span class="book-badge">${escapeHtml(book.condition)}</span>
+        </div>
+
+        <h3 class="mb-3">${escapeHtml(book.title)}</h3>
+
+        <div class="price mb-3">${priceLabel(book)}</div>
+
+        <p class="muted mb-3">${escapeHtml(book.description)}</p>
+
+        ${
+          book.sellerNote
+            ? `
+              <div class="mini-card mb-4">
+                <div class="fw-bold mb-1">Нотатка продавця</div>
+                <div class="muted">${escapeHtml(book.sellerNote)}</div>
+              </div>
+            `
+            : ''
+        }
+
+        <div class="mini-card mb-4">
+          <div class="fw-bold mb-1">Продавець</div>
+          <div class="muted">${escapeHtml(book.seller)}</div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex">
+          ${contactButton}
+          <button class="btn btn-soft" data-bs-dismiss="modal">Закрити</button>
+        </div>
+
+        ${ownerActions}
+      </div>
+    </div>
+  `;
 }
 
 function fillProfileForm(profile) {
