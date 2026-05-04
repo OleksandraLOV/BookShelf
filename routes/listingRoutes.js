@@ -40,6 +40,14 @@ router.post('/listings', (req, res) => {
       message: 'Тип оголошення має бути sell або exchange',
     });
   }
+  if (
+    type === 'sell' &&
+    (!price || Number(price) <= 0 || Number.isNaN(Number(price)))
+  ) {
+    return res.status(400).json({
+      message: 'Для продажу потрібно вказати ціну більше 0',
+    });
+  }
 
   const checkUserQuery = 'SELECT id FROM users WHERE id = ?';
 
@@ -236,6 +244,14 @@ router.put('/listings/:id', (req, res) => {
   if (type !== 'sell' && type !== 'exchange') {
     return res.status(400).json({
       message: 'Тип оголошення має бути sell або exchange',
+    });
+  }
+  if (
+    type === 'sell' &&
+    (!price || Number(price) <= 0 || Number.isNaN(Number(price)))
+  ) {
+    return res.status(400).json({
+      message: 'Для продажу потрібно вказати ціну більше 0',
     });
   }
 

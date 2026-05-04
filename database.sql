@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS bookshelf_db;
-CREATE DATABASE bookshelf_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+DROP DATABASE IF EXISTS book_app;
+CREATE DATABASE book_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE bookshelf_db;
+USE book_app;
 
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
