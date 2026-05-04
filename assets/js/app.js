@@ -123,6 +123,7 @@ function normalizeBook(book) {
     createdAt: book.created_at,
     seller: book.user_name || 'Користувач',
     image: book.image_url || fallbackImage,
+    isPlaceholderImage: !book.image_url,
     price: book.price,
     sellerNote: book.seller_note || '',
     sellerEmail: book.seller_email || '',
@@ -283,11 +284,11 @@ function renderAuthControls() {
       );
 
       wrap.innerHTML = `
-        <a href="profile.html" class="user-pill user-link">
-          ${userName}
-        </a>
-        <button class="btn btn-soft" onclick="logoutUser()">Вийти</button>
-      `;
+  <a href="profile.html" class="user-pill user-link">
+    ${userName}
+  </a>
+  <button class="btn btn-soft" onclick="logoutUser()">Вийти</button>
+`;
     } else {
       wrap.innerHTML = `
         <button class="btn btn-soft" onclick="openAuthModal('login')">Увійти</button>
@@ -642,11 +643,10 @@ function fillBookModal(book) {
     <div class="row g-0">
       <div class="col-lg-5">
         <img 
-          src="${escapeHtml(book.image || fallbackImage)}" 
-          alt="${escapeHtml(book.title)}" 
-          class="w-100 h-100" 
-          style="object-fit: cover; min-height: 100%;" 
-          onerror="this.src='${fallbackImage}'"
+  src="${escapeHtml(book.image || fallbackImage)}" 
+  alt="${escapeHtml(book.title)}" 
+  class="modal-book-cover ${book.image === fallbackImage ? 'modal-book-cover-placeholder' : ''}" 
+  onerror="this.src='${fallbackImage}'"
         >
       </div>
 
