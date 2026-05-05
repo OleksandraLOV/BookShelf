@@ -270,27 +270,52 @@ function renderMyListings(books) {
   if (!wrap) return;
 
   if (!books.length) {
-    wrap.innerHTML =
-      '<div class="status-box empty-state">У вас ще немає оголошень.</div>';
+    wrap.innerHTML = `
+      <div class="empty-state">
+        У вас ще немає оголошень.
+      </div>
+    `;
     return;
   }
 
   wrap.innerHTML = books
     .map(
       (book) => `
-    <div class="d-flex flex-column flex-md-row gap-3 align-items-start align-items-md-center p-3 border rounded-4 bg-white">
-      <img class="listing-thumb" src="${escapeHtml(book.image || fallbackImage)}" alt="${escapeHtml(book.title)}" onerror="this.src='${fallbackImage}'">
-      <div class="flex-grow-1">
-        <div class="fw-bold">${escapeHtml(book.title)}</div>
-        <div class="muted">${escapeHtml(book.city)} · ${escapeHtml(book.type)} · ${escapeHtml(book.condition)}</div>
-      </div>
-      <div class="d-flex gap-2 flex-wrap">
-        <button class="btn btn-soft" onclick="openBook(${book.id})">Переглянути</button>
-        <button class="btn btn-soft" onclick="prepareEdit(${book.id})">Редагувати</button>
-        <button class="btn btn-accent" onclick="deleteListing(${book.id})">Видалити</button>
-      </div>
-    </div>
-  `,
+        <article class="mini-card profile-listing-card">
+          <img
+            src="${escapeHtml(book.image || fallbackImage)}"
+            alt="${escapeHtml(book.title)}"
+            class="listing-thumb profile-listing-thumb ${
+              book.isPlaceholderImage ? 'profile-listing-thumb-placeholder' : ''
+            }"
+            onerror="this.src='${fallbackImage}'"
+          >
+
+          <div class="profile-listing-main">
+            <h3 class="profile-listing-title">
+              ${escapeHtml(book.title)}
+            </h3>
+
+            <div class="muted profile-listing-meta">
+              ${escapeHtml(book.city)} · ${escapeHtml(book.type)} · ${escapeHtml(book.condition)}
+            </div>
+          </div>
+
+          <div class="profile-listing-actions">
+            <button class="btn btn-soft" onclick="openBook(${book.id})">
+              Переглянути
+            </button>
+
+            <button class="btn btn-soft" onclick="prepareEdit(${book.id})">
+              Редагувати
+            </button>
+
+            <button class="btn btn-accent" onclick="deleteListing(${book.id})">
+              Видалити
+            </button>
+          </div>
+        </article>
+      `,
     )
     .join('');
 }
@@ -688,7 +713,9 @@ function fillBookModal(book) {
           <span class="book-badge">${escapeHtml(book.condition)}</span>
         </div>
 
-        <h3 class="mb-3">${escapeHtml(book.title)}</h3>
+        <h3 class="modal-book-title mb-3">
+  ${escapeHtml(book.title)}
+</h3>
 
         <div class="price mb-3">${priceLabel(book)}</div>
 

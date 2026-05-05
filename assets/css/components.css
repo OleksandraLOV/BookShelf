@@ -186,3 +186,38 @@
   border-radius: 22px;
   padding: 14px 18px;
 }
+
+/* Book modal */
+
+.modal-book-title {
+  max-width: 100%;
+  font-size: clamp(1.45rem, 2.3vw, 2rem);
+  line-height: 1.18;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+#bookModalBody {
+  overflow: hidden;
+}
+
+#bookModalBody .row,
+#bookModalBody [class*='col-'] {
+  min-width: 0;
+}
+
+#bookModalBody .mini-card {
+  overflow-wrap: anywhere;
+}
+
+.book-card h3 {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

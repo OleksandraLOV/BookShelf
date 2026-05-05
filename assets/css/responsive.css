@@ -113,3 +113,41 @@
     width: 100%;
   }
 }
+
+/* Profile listings responsive */
+
+@media (max-width: 1199.98px) {
+  .profile-listing-card {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+
+  .profile-listing-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    padding-top: 0.25rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .profile-listing-card {
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 0.9rem;
+  }
+
+  .profile-listing-thumb {
+    width: 64px;
+    height: 82px;
+  }
+
+  .profile-listing-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .profile-listing-actions .btn {
+    width: 100%;
+    min-width: 0;
+  }
+}
