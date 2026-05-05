@@ -15,6 +15,48 @@ function qs(selector, root = document) {
 function qsa(selector, root = document) {
   return [...root.querySelectorAll(selector)];
 }
+function getModal(selector) {
+  const modalEl = qs(selector);
+  if (!modalEl) return null;
+
+  return bootstrap.Modal.getOrCreateInstance(modalEl);
+}
+
+function showModal(selector) {
+  const modal = getModal(selector);
+  if (modal) modal.show();
+}
+
+function hideModal(selector) {
+  const modal = getModal(selector);
+  if (modal) modal.hide();
+}
+
+function cleanupModalState() {
+  const openedModal = document.querySelector('.modal.show');
+
+  if (!openedModal) {
+    document.body.classList.remove('modal-open');
+    document.body.style.removeProperty('overflow');
+    document.body.style.removeProperty('padding-right');
+  }
+
+  const backdrops = document.querySelectorAll('.modal-backdrop');
+
+  if (!openedModal && backdrops.length) {
+    backdrops.forEach((backdrop) => backdrop.remove());
+  }
+
+  if (openedModal && backdrops.length > 1) {
+    [...backdrops].slice(1).forEach((backdrop) => backdrop.remove());
+  }
+}
+
+function bindModalCleanup() {
+  qsa('.modal').forEach((modalEl) => {
+    modalEl.addEventListener('hidden.bs.modal', cleanupModalState);
+  });
+}
 
 function getCurrentUser() {
   try {
@@ -387,7 +429,7 @@ async function openBook(id) {
     fillBookModal(book);
 
     const modalEl = qs('#bookModal');
-    if (modalEl) new bootstrap.Modal(modalEl).show();
+    if (modalEl) showModal('#bookModal');
   } catch (error) {
     messageBox(error.message, 'error');
   }
@@ -634,6 +676,8 @@ function initCatalogFromQuery() {
     qs('#catalogTypeFilter').value = params.get('type') || 'all';
   }
 
+  qs('#catalogResetFiltersBtn')?.addEventListener('click', resetCatalogFilters);
+
   ['#catalogSearchInput', '#catalogCityFilter', '#catalogTypeFilter'].forEach(
     (selector) => {
       const element = qs(selector);
@@ -645,6 +689,18 @@ function initCatalogFromQuery() {
       );
     },
   );
+}
+function resetCatalogFilters() {
+  const searchInput = qs('#catalogSearchInput');
+  const cityFilter = qs('#catalogCityFilter');
+  const typeFilter = qs('#catalogTypeFilter');
+
+  if (searchInput) searchInput.value = '';
+  if (cityFilter) cityFilter.value = 'all';
+  if (typeFilter) typeFilter.value = 'all';
+
+  window.history.replaceState(null, '', 'catalog.html');
+  handleCatalogFilters();
 }
 
 function openAuthModal(mode = 'login') {
@@ -662,7 +718,7 @@ function openAuthModal(mode = 'login') {
   qs(`[data-auth-pane="${mode}"]`, modalEl)?.classList.remove('hidden');
   qs(`[data-auth-tab="${mode}"]`, modalEl)?.classList.add('active');
 
-  new bootstrap.Modal(modalEl).show();
+  showModal('#authModal');
 }
 
 function bindAuthTabs() {
@@ -950,6 +1006,7 @@ async function logoutUser() {
 }
 
 async function init() {
+  bindModalCleanup();
   initForms();
   initHomeSearch();
   initCatalogFromQuery();

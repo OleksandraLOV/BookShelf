@@ -199,9 +199,6 @@
   hyphens: auto;
 }
 
-#bookModalBody {
-  overflow: hidden;
-}
 
 #bookModalBody .row,
 #bookModalBody [class*='col-'] {
@@ -221,3 +218,29 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Book preview modal */
+
+#bookModal .modal-dialog {
+  max-height: calc(100vh - 2rem);
+}
+
+#bookModal .modal-content {
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
+}
+
+#bookModalBody {
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#bookModalBody .row {
+  min-height: 100%;
+}
+
+#bookModalBody [class*='col-'] {
+  min-width: 0;
+}
+
