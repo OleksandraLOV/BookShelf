@@ -1,0 +1,68 @@
+.hero-visual {
+  display: grid;
+  gap: 1rem;
+}
+
+.cover-card {
+  border-radius: 22px;
+  padding: 1rem;
+  min-height: 160px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 12px 28px rgba(58, 36, 20, 0.14);
+}
+
+.cover-1 {
+  background: linear-gradient(135deg, #7f5539, #b08968);
+}
+
+.cover-2 {
+  background: linear-gradient(135deg, #6c584c, #a98467);
+}
+
+.cover-3 {
+  background: linear-gradient(135deg, #355070, #6d597a);
+}
+
+.display-title {
+  font-size: clamp(2rem, 4vw, 4.25rem);
+  line-height: 1.02;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  max-width: 11ch;
+}
+
+.section-title {
+  font-size: clamp(1.6rem, 2vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #9c6644, #7f5539);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+  font-weight: 800;
+  box-shadow: var(--shadow);
+  flex-shrink: 0;
+}
+
+.info-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+}

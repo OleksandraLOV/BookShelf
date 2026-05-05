@@ -1,0 +1,59 @@
+.app-navbar {
+  padding: 1rem 0;
+  backdrop-filter: blur(14px);
+  background: rgba(247, 244, 239, 0.82);
+  border-bottom: 1px solid rgba(127, 85, 57, 0.08);
+}
+
+.brand-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #9c6644, #7f5539);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  box-shadow: var(--shadow);
+}
+
+.hero-card,
+.search-panel,
+.stat-card,
+.book-card,
+.profile-card,
+.section-shell,
+.mini-card,
+.status-box,
+.page-header-card,
+.auth-panel,
+.empty-auth-card {
+  background: rgba(255, 253, 249, 0.92);
+  border: 1px solid rgba(127, 85, 57, 0.08);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
+}
+
+.hero-card,
+.profile-card,
+.section-shell,
+.page-header-card,
+.auth-panel,
+.empty-auth-card {
+  padding: 1.5rem;
+}
+
+.search-panel {
+  padding: 1.2rem;
+}
+
+.stat-card,
+.mini-card,
+.status-box {
+  padding: 1.2rem;
+}
+
+.footer {
+  padding: 2.5rem 0 3rem;
+  color: var(--muted);
+}

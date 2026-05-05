@@ -1,0 +1,115 @@
+@media (max-width: 991px) {
+  .display-title {
+    max-width: 100%;
+  }
+}
+
+/* Mobile navbar with working toggler */
+
+@media (max-width: 991.98px) {
+  .app-navbar {
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  .app-navbar .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .app-navbar .navbar-toggler {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid #eaded3;
+    border-radius: 16px;
+    background: #fffaf4;
+    box-shadow: 0 10px 24px rgba(92, 52, 31, 0.08);
+  }
+
+  .app-navbar .navbar-toggler:focus {
+    box-shadow: 0 0 0 3px rgba(156, 103, 68, 0.18);
+  }
+
+  .app-navbar .navbar-collapse {
+    flex-basis: 100%;
+    width: 100%;
+    margin-top: 16px;
+  }
+
+  .app-navbar .navbar-collapse:not(.show) {
+    display: none !important;
+  }
+
+  .app-navbar .navbar-collapse.show,
+  .app-navbar .navbar-collapse.collapsing {
+    display: block !important;
+  }
+
+  .app-navbar .navbar-nav {
+    width: 100%;
+    margin-left: 0 !important;
+    padding: 18px;
+    border: 1px solid #eaded3;
+    border-radius: 28px;
+    background: #fff;
+    box-shadow: 0 18px 42px rgba(92, 52, 31, 0.1);
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .app-navbar .navbar-nav .nav-item {
+    width: 100%;
+    margin: 0 !important;
+  }
+
+  .app-navbar .nav-link {
+    width: 100%;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+  }
+
+  .app-navbar .nav-link:hover {
+    background: #f1dfcf;
+    color: #5c341f;
+  }
+
+  .app-navbar .js-add-book {
+    width: 100%;
+    min-height: 50px;
+  }
+
+  .app-navbar [data-auth-nav] {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+  }
+
+  .app-navbar [data-auth-nav] .user-pill,
+  .app-navbar [data-auth-nav] .btn {
+    flex: 1;
+    min-height: 50px;
+    justify-content: center;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 420px) {
+  .app-navbar [data-auth-nav] {
+    flex-direction: column;
+  }
+
+  .app-navbar [data-auth-nav] .user-pill,
+  .app-navbar [data-auth-nav] .btn {
+    width: 100%;
+  }
+}
